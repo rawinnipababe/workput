@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "users/docs" // ให้ Swag สร้างเอกสารใน Folder docs โดยอัตโนมัติ
-
 	"users/internal/handler"
+
+	_ "users/docs" // ให้ Swag สร้างเอกสารใน Folder docs โดยอัตโนมัติ
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -24,9 +24,11 @@ func main() {
 	// User API routes
 	api := r.Group("/api/v1")
 	{
-		// ใช้ Handler จากไฟล์ user_handler.go
-		api.GET("/users/:id", handler.GetUserByID)
-		api.PUT("/users/:id", handler.UpdateUserByID) // Added PUT route for updating user
+		// Middleware สำหรับตรวจสอบ Bearer Token
+		api.Use(handler.AuthMiddleware())
+
+		// Routes สำหรับ API
+		api.PUT("/users/:user_id", handler.UpdateUser) // อัพเดทข้อมูลผู้ใช้
 	}
 
 	// Start server

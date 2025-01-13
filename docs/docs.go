@@ -15,9 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users/{id}": {
+        "/users/{user_id}": {
             "put": {
-                "description": "Update details of a user by ID",
+                "description": "Update a user's details by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,22 +27,22 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Update user by ID",
+                "summary": "Update a user by ID",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "User ID",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "User data",
+                        "description": "User Information",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.User"
+                            "$ref": "#/definitions/handler.UpdateUserRequest"
                         }
                     }
                 ],
@@ -59,8 +59,20 @@ const docTemplate = `{
                             "$ref": "#/definitions/handler.ErrorResponse"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrorResponse"
                         }
@@ -78,9 +90,29 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.UpdateUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name"
+            ],
+            "properties": {
+                "email": {
+                    "description": "อีเมลต้องอยู่ในรูปแบบที่ถูกต้อง",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "ฟิลด์ที่จำเป็น",
+                    "type": "string"
+                }
+            }
+        },
         "handler.User": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },

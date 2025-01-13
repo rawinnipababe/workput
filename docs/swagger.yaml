@@ -5,8 +5,22 @@ definitions:
       message:
         type: string
     type: object
+  handler.UpdateUserRequest:
+    properties:
+      email:
+        description: อีเมลต้องอยู่ในรูปแบบที่ถูกต้อง
+        type: string
+      name:
+        description: ฟิลด์ที่จำเป็น
+        type: string
+    required:
+    - email
+    - name
+    type: object
   handler.User:
     properties:
+      email:
+        type: string
       id:
         type: integer
       name:
@@ -19,23 +33,23 @@ info:
   title: Simple API Example
   version: "1.0"
 paths:
-  /users/{id}:
+  /users/{user_id}:
     put:
       consumes:
       - application/json
-      description: Update details of a user by ID
+      description: Update a user's details by ID
       parameters:
       - description: User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: integer
-      - description: User data
+      - description: User Information
         in: body
         name: user
         required: true
         schema:
-          $ref: '#/definitions/handler.User'
+          $ref: '#/definitions/handler.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -47,11 +61,19 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/handler.ErrorResponse'
-      summary: Update user by ID
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Update a user by ID
       tags:
       - Users
 swagger: "2.0"
